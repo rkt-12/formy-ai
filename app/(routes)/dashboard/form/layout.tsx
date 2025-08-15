@@ -1,0 +1,15 @@
+import SideMenu from "../_components/_common/SideMenu";
+
+export default async function DashboardLayout({
+    children,
+}:Readonly<{
+    children: React.ReactNode;
+}>) {
+  return (
+    <div className="flex h-[calc(100vh_-_65px)] w-full flex-row">
+        <div className="flex relative w-[45px]">
+            <SideMenu/>
+        </div>
+    </div>
+  )  
+}
