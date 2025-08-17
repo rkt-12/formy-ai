@@ -1,9 +1,8 @@
 import React from 'react'
+import FormBuilder from '../../../_components/FormBuilder'
 
-const Page = () => {
-  return (
-    <div>Page</div>
-  )
+const Builder = () => {
+  return <FormBuilder />
 }
 
-export default Page
+export default Builder

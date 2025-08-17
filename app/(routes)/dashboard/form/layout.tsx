@@ -10,6 +10,7 @@ export default async function DashboardLayout({
         <div className="flex relative w-[45px]">
             <SideMenu/>
         </div>
+        <main className="w-full flex-1">{children}</main>
     </div>
   )  
 }

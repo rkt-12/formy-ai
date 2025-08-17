@@ -36,7 +36,7 @@ const FormItem = (props: PropsType) => {
 
   const router = useRouter();
   const onClick = useCallback(() => {
-    router.push(`/dashboard/form/builders/${formId}`);
+    router.push(`/dashboard/form/builder/${formId}`);
   }, []);
   return (
     <div onClick={onClick} role="button" className="w-full h-auto">
