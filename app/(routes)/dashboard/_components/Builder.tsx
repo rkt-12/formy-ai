@@ -2,6 +2,8 @@ import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import React from "react";
 import BuilderSidebar from "./BuilderSidebar";
 import { defaultBackgroundColor } from "@/constant";
+import BuilderCanvas from "./BuilderCanvas";
+import BuilderBlockProperties from "./BuilderBlockProperties";
 
 const Builder = (props: { isSidebarOpen: boolean }) => {
   return (
@@ -15,9 +17,10 @@ const Builder = (props: { isSidebarOpen: boolean }) => {
           }}
         >
             <SidebarTrigger className="absolute top-0 z-50 "/>
-            {/* <BuilderCanvas/> */}
+            <BuilderCanvas/>
         </div>
       </SidebarInset>
+      <BuilderBlockProperties/>
     </>
   );
 };

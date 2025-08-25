@@ -16,6 +16,8 @@ import {
 import { cn } from "@/lib/utils";
 import { FileTextIcon, Home } from "lucide-react";
 import React from "react";
+import FormBlockBox from "./_common/FormBlockBox";
+import FormSettings from "./_common/FormSettings";
 
 const BuilderSidebar = ({
   rest,
@@ -71,6 +73,11 @@ const BuilderSidebar = ({
               Settings
             </button>
           </div>
+          {/* {From Blocks} */}
+          {tab==="blocks" && <FormBlockBox/>}
+          {/* {Form Settings} */}
+          {tab==="settings" && <FormSettings/>}
+          
         </div>
       </SidebarContent>
     </Sidebar>

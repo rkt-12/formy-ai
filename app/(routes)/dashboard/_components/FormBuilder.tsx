@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import Builder from "./Builder";
 
 const FormBuilder = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   return (
     <div>
       <SidebarProvider
         open={isSidebarOpen}
         onOpenChange={setIsSidebarOpen}
-        className="h-[calc(100vh_-_65px)]"
+        className="h-[calc(100vh_-_64px)]"
         style={
             {
                 "--sidebar-width": "300px",
