@@ -2,9 +2,22 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import React, { useState } from "react";
 import Builder from "./Builder";
+import { useBuilder } from "@/context/builder-provider";
+import { Loader } from "lucide-react";
 
 const FormBuilder = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  const {formData,loading}=useBuilder();
+  const isPublished = formData?.published;
+
+  if(loading){
+    return <div className="w-full flex h-56 items-center justify-center">
+      <Loader className="animate-spin" size="3rem" />
+    </div>
+  }
+  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(isPublished ? false : true);
+  
   return (
     <div>
       <SidebarProvider
