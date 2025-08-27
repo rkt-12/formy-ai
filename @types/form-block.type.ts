@@ -1,9 +1,9 @@
 import { ElementType, FC } from "react";
 
-export type FormCategoryType="Layout"|"Form";
+export type FormCategoryType="Layout"|"Field";
 export type FormBlockType="RowLayout"
 
-export type FormBlock={
+export type ObjectBlockType={
     blockCategory:FormCategoryType;
     blockType:FormBlockType;
 
@@ -29,5 +29,5 @@ export type FormBlockInstance={
 };
 
 export type FormBlocksType={
-    [key in FormBlockType]:FormBlock
+    [key in FormBlockType]:ObjectBlockType
 }
