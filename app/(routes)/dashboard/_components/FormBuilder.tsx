@@ -5,6 +5,7 @@ import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 import Builder from "./Builder";
 import { useBuilder } from "@/context/builder-provider";
 import { Loader } from "lucide-react";
+import BuilderDragOverlay from "./BuilderDragOverlay";
 
 const FormBuilder = () => {
   const { formData, loading } = useBuilder();
@@ -31,6 +32,7 @@ const FormBuilder = () => {
   return (
     <div>
       <DndContext sensors={useSensors(mouseSensor)}>
+        <BuilderDragOverlay/>
         <SidebarProvider
           open={isSidebarOpen}
           onOpenChange={setIsSidebarOpen}
