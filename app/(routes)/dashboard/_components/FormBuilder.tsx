@@ -11,6 +11,14 @@ const FormBuilder = () => {
   const { formData, loading } = useBuilder();
   const isPublished = formData?.published;
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!isPublished);
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 8,
+    },
+  });
+  const sensors = useSensors(mouseSensor);
+
   if (loading) {
     return (
       <div className="w-full flex h-56 items-center justify-center">
@@ -19,20 +27,10 @@ const FormBuilder = () => {
     );
   }
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(
-    isPublished ? false : true
-  );
-
-  const mouseSensor=useSensor(MouseSensor,{
-    activationConstraint:{
-      distance:8,
-    }
-  })
-
   return (
     <div>
-      <DndContext sensors={useSensors(mouseSensor)}>
-        <BuilderDragOverlay/>
+      <DndContext sensors={sensors}>
+        <BuilderDragOverlay />
         <SidebarProvider
           open={isSidebarOpen}
           onOpenChange={setIsSidebarOpen}
@@ -44,7 +42,7 @@ const FormBuilder = () => {
             } as React.CSSProperties
           }
         >
-          <Builder {...{ isSidebarOpen }} />
+          <Builder isSidebarOpen={isSidebarOpen} />
         </SidebarProvider>
       </DndContext>
     </div>
