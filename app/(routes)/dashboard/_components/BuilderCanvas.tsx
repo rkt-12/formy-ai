@@ -1,12 +1,14 @@
-import { FormBlockInstance } from "@/@types/form-block.type";
+import { FormBlockInstance, FormBlockType } from "@/@types/form-block.type";
+import { allBlockLayouts } from "@/constant";
 import { useBuilder } from "@/context/builder-provider";
 import { FormBlocks } from "@/lib/form-blocks";
+import { generateUniqueId } from "@/lib/helper";
 import { cn } from "@/lib/utils";
 import { Active, DragEndEvent, useDndMonitor, useDroppable } from "@dnd-kit/core";
 import React, { useState } from "react";
 
 const BuilderCanvas = () => {
-  const { blockLayouts } = useBuilder();
+  const { blockLayouts,addBlockLayout } = useBuilder();
   const [activeBlock, setActiveBlock]=useState<Active | null>(null);
   const droppable = useDroppable({
     id: "builder-canvas-droppable",
@@ -20,6 +22,24 @@ const BuilderCanvas = () => {
     },
     onDragEnd:(event:DragEndEvent)=>{
       console.log("DRAG END",event);
+      const {active,over}=event;
+      if(!over || !active)return;
+      setActiveBlock(null);
+
+      const isBlockBtnElement = active?.data?.current?.isBlockBtnElement;
+      const isBlockLayout= active?.data?.current?.blockType;
+
+      const isDraggingOverCanvas = over?.data?.current?.isBuilderCanvasDropArea;
+
+      if(isBlockBtnElement && allBlockLayouts.includes(isBlockLayout) && isDraggingOverCanvas){
+        const blockType= active?.data?.current?.blockType;
+        const newBlockLayout =FormBlocks[
+          blockType as FormBlockType
+        ].createInstance(generateUniqueId())
+        console.log("NEW BLOCK LAYOUT INSTANCE",newBlockLayout)
+        addBlockLayout(newBlockLayout);
+        return;
+      }
     }
   })
 

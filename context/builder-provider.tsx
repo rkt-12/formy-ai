@@ -11,6 +11,7 @@ type BuilderContextType = {
 
     blockLayouts: FormBlockInstance[];
     setBlockLayouts: React.Dispatch<React.SetStateAction<FormBlockInstance[]>>;
+    addBlockLayout:(blockLayout:FormBlockInstance)=>void;
 };  
 
 export const BuilderContext = createContext<BuilderContextType | null>(null);
@@ -58,13 +59,22 @@ export default function BuilderContextProvider({
         fetchData();
     }, [formId]);
 
+    const addBlockLayout = (blockLayout:FormBlockInstance)=>{
+        setBlockLayouts((prev) => {
+            const updatedBlock=[...prev];
+            updatedBlock.push(blockLayout);
+            return updatedBlock;
+        })
+    }
+
     return (
         <BuilderContext.Provider value={{
             loading,
             formData,
             setFormData,
             blockLayouts,
-            setBlockLayouts
+            setBlockLayouts,
+            addBlockLayout,
         }}>
             {children}
         </BuilderContext.Provider>
