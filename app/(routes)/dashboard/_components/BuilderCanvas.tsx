@@ -80,7 +80,7 @@ function CanvasBlockLayoutWrapper({
   const CanvasBlockLayout = FormBlocks[blockLayout.blockType].canvasComponent;
   return (
     <div className="relative mb-1">
-      <CanvasBlockLayout />
+      <CanvasBlockLayout blockInstance={blockLayout}/>
     </div>
   );
 }

@@ -14,7 +14,7 @@ export type ObjectBlockType={
         label: string;
     };
 
-    canvasComponent:FC;
+    canvasComponent:FC<{blockInstance:FormBlockInstance}>;
     formComponent:FC;
     propertiesComponent:FC;
 

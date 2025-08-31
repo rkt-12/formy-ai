@@ -1,6 +1,7 @@
 "use client";
 import { FormBlockInstance } from "@/@types/form-block.type";
 import { FormWithSettings } from "@/@types/form.type";
+import { generateUniqueId } from "@/lib/helper";
 import { useParams } from "next/navigation";
 import React, { createContext, use, useEffect } from "react";
 
@@ -12,6 +13,9 @@ type BuilderContextType = {
     blockLayouts: FormBlockInstance[];
     setBlockLayouts: React.Dispatch<React.SetStateAction<FormBlockInstance[]>>;
     addBlockLayout:(blockLayout:FormBlockInstance)=>void;
+
+    removeBlockLayout:(id:string)=>void;
+    duplicateBlockLayout:(id:string)=>void;
 };  
 
 export const BuilderContext = createContext<BuilderContextType | null>(null);
@@ -67,6 +71,32 @@ export default function BuilderContextProvider({
         })
     }
 
+    const duplicateBlockLayout=(id:string)=>{
+        setBlockLayouts((prevBlocks)=>{
+            const blockToDuplicate=prevBlocks.find((block)=>block.id===id)
+            if(!blockToDuplicate)return prevBlocks;
+
+            const duplicatedBlocks={
+                ...blockToDuplicate,
+                id: `layout-${generateUniqueId()}`,
+                childblocks: blockToDuplicate.childBlocks?.map((childblock)=>({
+                    ...childblock,
+                    id:generateUniqueId(),
+                })),
+            }
+
+            const updatedBlockLayouts=[...prevBlocks]
+            const insertIndex=prevBlocks.findIndex((block)=>block.id===id)+1
+            updatedBlockLayouts.splice(insertIndex,0,duplicatedBlocks)
+
+            return updatedBlockLayouts;
+        })
+    }
+
+    const removeBlockLayout=(id:string)=>{
+        setBlockLayouts((prev)=>prev.filter((block)=>block.id!==id))
+    }
+
     return (
         <BuilderContext.Provider value={{
             loading,
@@ -75,6 +105,8 @@ export default function BuilderContextProvider({
             blockLayouts,
             setBlockLayouts,
             addBlockLayout,
+            removeBlockLayout,
+            duplicateBlockLayout,
         }}>
             {children}
         </BuilderContext.Provider>
