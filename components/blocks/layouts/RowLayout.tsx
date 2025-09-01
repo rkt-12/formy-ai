@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useBuilder } from "@/context/builder-provider";
 import { cn } from "@/lib/utils";
+import { useDraggable } from "@dnd-kit/core";
 import { Copy, GripHorizontal, Rows2, Trash2Icon } from "lucide-react";
 
 const blockCategory: FormCategoryType="Layout"
@@ -34,19 +35,40 @@ function RowLayoutCanvasComponent(
   {blockInstance}:{blockInstance:FormBlockInstance}
 ) {
 
-  const {removeBlockLayout,duplicateBlockLayout}=useBuilder();
+  const {removeBlockLayout , duplicateBlockLayout , selectedBlockLayout , handleSelectedLayout}=useBuilder();
   const childBlocks=blockInstance.childBlocks || [];
 
+  const isSelected=selectedBlockLayout?.id===blockInstance.id
+  const draggable = useDraggable({
+    id: blockInstance.id+"_drag-area",
+    disabled: blockInstance.isLocked,
+    data: {
+      blockType: blockInstance.blockType,
+      blockId: blockInstance.id,
+      isCanvasLayout: true,
+    }
+  })
+
+  if(draggable.isDragging)return;
+
   return (
-    <div className="max-w-full">
+    <div ref={draggable.setNodeRef} className="max-w-full">
       {blockInstance.isLocked && <Border/>}
-      <Card className={cn(
-        `w-full bg-white relative border shadow-sm min-h-[120px] max-w-[768px] rounded-md !p-0`,
-        blockInstance.isLocked && "!rounded-t-none"
-      )}>
+      <Card 
+        className={cn(
+          `w-full bg-white relative border shadow-sm min-h-[120px] max-w-[768px] rounded-md !p-0`,
+          blockInstance.isLocked && "!rounded-t-none"
+        )} 
+        onClick={()=>{
+          handleSelectedLayout(blockInstance);
+        }}
+      >
         <CardContent className="px-2 pb-2">
+          {isSelected && !blockInstance.isLocked && (
+            <div className="w-[5px] absolute left-0 top-0 rounded-l-md h-full bg-primary"/>
+          )}
           {!blockInstance.isLocked && (
-            <div className="flex items-center w-full h-[24px] cursor-move justify-center" role="button">
+            <div {...draggable.listeners} {...draggable.attributes} className="flex items-center w-full h-[24px] cursor-move justify-center" role="button">
               <GripHorizontal size="20px" className="text-muted-foreground"/>
             </div>
           )}
@@ -61,7 +83,7 @@ function RowLayoutCanvasComponent(
             )}
           </div>
         </CardContent>
-        {!blockInstance.isLocked && (
+        {isSelected && !blockInstance.isLocked && (
           <CardFooter className="flex items-center gap-3 justify-end border-t py-3">
             <Button variant="outline" size="icon" onClick={(e)=>{
               e.stopPropagation();

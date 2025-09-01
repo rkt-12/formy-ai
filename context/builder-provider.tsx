@@ -3,7 +3,7 @@ import { FormBlockInstance } from "@/@types/form-block.type";
 import { FormWithSettings } from "@/@types/form.type";
 import { generateUniqueId } from "@/lib/helper";
 import { useParams } from "next/navigation";
-import React, { createContext, use, useEffect } from "react";
+import React, { createContext, use, useEffect, useState } from "react";
 
 type BuilderContextType = {
     loading: boolean;
@@ -16,6 +16,9 @@ type BuilderContextType = {
 
     removeBlockLayout:(id:string)=>void;
     duplicateBlockLayout:(id:string)=>void;
+
+    selectedBlockLayout : FormBlockInstance | null;
+    handleSelectedLayout : (blockLayout: FormBlockInstance | null)=>void;
 };  
 
 export const BuilderContext = createContext<BuilderContextType | null>(null);
@@ -31,6 +34,7 @@ export default function BuilderContextProvider({
     const [loading, setLoading] = React.useState(true);
     const [formData, setFormData] = React.useState<FormWithSettings | null>(null);
     const [blockLayouts, setBlockLayouts] = React.useState<FormBlockInstance[]>([]);
+    const [selectedBlockLayout,setSelectedBlockLayout]= useState<FormBlockInstance | null >(null); 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -95,6 +99,11 @@ export default function BuilderContextProvider({
 
     const removeBlockLayout=(id:string)=>{
         setBlockLayouts((prev)=>prev.filter((block)=>block.id!==id))
+        if(selectedBlockLayout?.id===id)setSelectedBlockLayout(null);
+    }
+
+    const handleSelectedLayout=(blockLayout:FormBlockInstance|null)=>{
+        setSelectedBlockLayout(blockLayout);
     }
 
     return (
@@ -107,6 +116,8 @@ export default function BuilderContextProvider({
             addBlockLayout,
             removeBlockLayout,
             duplicateBlockLayout,
+            selectedBlockLayout,
+            handleSelectedLayout,
         }}>
             {children}
         </BuilderContext.Provider>
