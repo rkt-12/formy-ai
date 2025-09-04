@@ -8,7 +8,7 @@ import { Active, DragEndEvent, useDndMonitor, useDroppable } from "@dnd-kit/core
 import React, { useState } from "react";
 
 const BuilderCanvas = () => {
-  const { blockLayouts,addBlockLayout } = useBuilder();
+  const { blockLayouts,addBlockLayout ,repositionBlockLayout} = useBuilder();
   const [activeBlock, setActiveBlock]=useState<Active | null>(null);
   const droppable = useDroppable({
     id: "builder-canvas-droppable",
@@ -39,6 +39,28 @@ const BuilderCanvas = () => {
         console.log("NEW BLOCK LAYOUT INSTANCE",newBlockLayout)
         addBlockLayout(newBlockLayout);
         return;
+      }
+
+      console.log(over, "OVER DATA");
+      const isDroppingOverCanvasBlockLayoutAbove = over?.data?.current?.isAbove;
+      const isDroppingOverCanvasBlockLayoutBelow = over?.data?.current?.isBelow;
+
+      const isDroppingOverCanvasLayout = isDroppingOverCanvasBlockLayoutAbove||isDroppingOverCanvasBlockLayoutBelow;
+
+      const isDraggingCanvasLayout= active?.data?.current?.isCanvasLayout;
+
+      const draggingCanvasLayoutOverAnotherLayout = isDroppingOverCanvasLayout && isDraggingCanvasLayout;
+      if(draggingCanvasLayoutOverAnotherLayout){
+        const activeId= active?.data?.current?.blockId;
+        const overId= over?.data?.current?.blockId;
+
+        let position:"above" | "below" = "below";
+        if(isDroppingOverCanvasBlockLayoutAbove){
+          position="above"
+        }
+
+        repositionBlockLayout(activeId,overId,position);
+        return 
       }
     }
   })

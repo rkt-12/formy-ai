@@ -2,6 +2,7 @@
 import { FormBlockInstance } from "@/@types/form-block.type";
 import { FormWithSettings } from "@/@types/form.type";
 import { generateUniqueId } from "@/lib/helper";
+import { set } from "date-fns";
 import { useParams } from "next/navigation";
 import React, { createContext, use, useEffect, useState } from "react";
 
@@ -19,6 +20,7 @@ type BuilderContextType = {
 
     selectedBlockLayout : FormBlockInstance | null;
     handleSelectedLayout : (blockLayout: FormBlockInstance | null)=>void;
+    repositionBlockLayout:(activeId:string, overId:string, position:"above" | "below")=>void;
 };  
 
 export const BuilderContext = createContext<BuilderContextType | null>(null);
@@ -106,6 +108,24 @@ export default function BuilderContextProvider({
         setSelectedBlockLayout(blockLayout);
     }
 
+    const repositionBlockLayout=(activeId:string, overId:string, position:"above" | "below")=>{
+        setBlockLayouts((prev)=>{
+            const activeIndex= prev.findIndex((block)=>block.id===activeId);
+            const overIndex= prev.findIndex((block)=>block.id===overId);
+            if(activeIndex===-1 || overIndex===-1 ){
+                console.warn("active or over block not found")
+                return prev;
+            }
+            const updatedBlocks=[...prev];
+            const [movedBlock]=updatedBlocks.splice(activeIndex,1);
+            const insertIndex= position==="above" ? overIndex : overIndex +1;
+            updatedBlocks.splice(insertIndex,0,movedBlock);
+            return updatedBlocks;
+        });
+    }
+    
+
+
     return (
         <BuilderContext.Provider value={{
             loading,
@@ -118,6 +138,7 @@ export default function BuilderContextProvider({
             duplicateBlockLayout,
             selectedBlockLayout,
             handleSelectedLayout,
+            repositionBlockLayout,
         }}>
             {children}
         </BuilderContext.Provider>
