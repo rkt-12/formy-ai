@@ -8,7 +8,7 @@ import { Active, DragEndEvent, useDndMonitor, useDroppable } from "@dnd-kit/core
 import React, { useState } from "react";
 
 const BuilderCanvas = () => {
-  const { blockLayouts,addBlockLayout ,repositionBlockLayout} = useBuilder();
+  const { blockLayouts,addBlockLayout ,repositionBlockLayout, insertBlockLayoutAtIndex} = useBuilder();
   const [activeBlock, setActiveBlock]=useState<Active | null>(null);
   const droppable = useDroppable({
     id: "builder-canvas-droppable",
@@ -41,11 +41,28 @@ const BuilderCanvas = () => {
         return;
       }
 
-      console.log(over, "OVER DATA");
       const isDroppingOverCanvasBlockLayoutAbove = over?.data?.current?.isAbove;
       const isDroppingOverCanvasBlockLayoutBelow = over?.data?.current?.isBelow;
 
       const isDroppingOverCanvasLayout = isDroppingOverCanvasBlockLayoutAbove||isDroppingOverCanvasBlockLayoutBelow;
+
+      const droppingLayoutBlockOverCanvas = isBlockBtnElement && allBlockLayouts.includes(isBlockLayout) && isDroppingOverCanvasLayout;
+      
+      if(droppingLayoutBlockOverCanvas){
+        const blockType= active.data?.current?.blockType;
+        const overId= over?.data?.current?.blockId;
+        const newBlockLayout =FormBlocks[
+          blockType as FormBlockType
+        ].createInstance(generateUniqueId())
+
+        let position:"above" | "below" = "below";
+        if(isDroppingOverCanvasBlockLayoutAbove){
+          position="above"
+        }
+        insertBlockLayoutAtIndex(newBlockLayout,overId,position);
+        return;
+      }
+
 
       const isDraggingCanvasLayout= active?.data?.current?.isCanvasLayout;
 
@@ -74,7 +91,7 @@ const BuilderCanvas = () => {
           ref={droppable.setNodeRef}
           className={cn(
             `w-full relative bg-transparent px-2 rounded-md flex flex-col min-h-svh items-center justify-start pt-1 pb-14 ring-4 ring-primary/20 ring-inset`,
-            droppable.isOver && "ring-4 ring-primary/20 ring-inset"
+            droppable.isOver && blockLayouts.length===0 && "ring-4 ring-primary/20 ring-inset"
           )}
         >
           <div className="w-full mb-3 bg-white bg-[url(/images/form-bg.jpg)] bg-center bg-cover bg-no-repeat border shadow-sm h-[135px] max-w-[768px] rounded-md px-1 mt-2" />
