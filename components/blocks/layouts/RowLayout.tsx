@@ -1,10 +1,12 @@
 import { FormBlockInstance, FormBlockType, FormCategoryType, ObjectBlockType } from "@/@types/form-block.type";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { allBlockLayouts } from "@/constant";
 import { useBuilder } from "@/context/builder-provider";
 import { cn } from "@/lib/utils";
-import { useDraggable } from "@dnd-kit/core";
+import { Active, DragEndEvent, useDndMonitor, useDraggable, useDroppable } from "@dnd-kit/core";
 import { Copy, GripHorizontal, Rows2, Trash2Icon } from "lucide-react";
+import { useState } from "react";
 
 const blockCategory: FormCategoryType="Layout"
 const blockType: FormBlockType="RowLayout"
@@ -39,6 +41,17 @@ function RowLayoutCanvasComponent(
   const childBlocks=blockInstance.childBlocks || [];
 
   const isSelected=selectedBlockLayout?.id===blockInstance.id
+
+  const droppable = useDroppable({
+    id: blockInstance.id,
+    disabled: blockInstance.isLocked,
+    data: {
+      isLAyoutDropArea: true,
+    },
+  });
+
+  const [activeBlock, setActiveBlock] = useState<Active | null>(null);
+
   const draggable = useDraggable({
     id: blockInstance.id+"_drag-area",
     disabled: blockInstance.isLocked,
@@ -49,12 +62,28 @@ function RowLayoutCanvasComponent(
     }
   })
 
+  useDndMonitor({
+    onDragStart: (event) =>{
+      setActiveBlock(event.active);
+    },
+    onDragEnd: (event: DragEndEvent) =>{
+      const {active, over}=event;
+      if(!active || !over){return}
+      setActiveBlock(null);
+
+      console.log(over,"over");
+      console.log(active,"active");
+
+    }
+  });
+
   if(draggable.isDragging)return;
 
   return (
     <div ref={draggable.setNodeRef} className="max-w-full">
       {blockInstance.isLocked && <Border/>}
       <Card 
+        ref={droppable.setNodeRef}
         className={cn(
           `w-full bg-white relative border shadow-sm min-h-[120px] max-w-[768px] rounded-md !p-0`,
           blockInstance.isLocked && "!rounded-t-none"
@@ -74,7 +103,14 @@ function RowLayoutCanvasComponent(
           )}
           
           <div className="flex flex-wrap gap-2">
-            {childBlocks?.length==0 ? <PlaceHolder/> : (
+            {droppable.isOver && !blockInstance.isLocked && activeBlock?.data?.current?.isBlockBtnElement && !allBlockLayouts.includes(activeBlock?.data?.current?.blockType) && (
+              <div className="relative border border-dotted border-primary bg-primary/10 w-full h-20">
+                <div className="absolute left-1/2 top-0 -translate-x-1/2 text-xs bg-primary text-white text-center w-28 p-1 rounded-b-full shadow-md">
+                  Drag it here
+                </div>
+              </div>
+            )}
+            {!droppable.isOver && childBlocks?.length==0 ? <PlaceHolder/> : (
               <div className="flex w-full flex-col items-center justify-start gap-4 py-4 px-3">
                 <div className="flex items-center justify-center gap-1">
                   {/* ChildBlocks */}
