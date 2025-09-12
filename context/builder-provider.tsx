@@ -23,6 +23,8 @@ type BuilderContextType = {
     repositionBlockLayout:(activeId:string, overId:string, position:"above" | "below")=>void;
 
     insertBlockLayoutAtIndex:(newblockLayout:FormBlockInstance, overId:string, position:"above" | "below")=>void;
+
+    updateBlockLayout:(id:string, childrenBlocks:FormBlockInstance[])=>void;
 };  
 
 export const BuilderContext = createContext<BuilderContextType | null>(null);
@@ -138,6 +140,16 @@ export default function BuilderContextProvider({
         })
     }
 
+    const updateBlockLayout=(id:string,childrenBlocks:FormBlockInstance[])=>{
+        setBlockLayouts((prev)=>prev.map((block)=>
+            block.id===id?{
+                ...block,
+                childBlocks:childrenBlocks,
+            }:
+            block
+        ))
+    }
+
 
     return (
         <BuilderContext.Provider value={{
@@ -153,6 +165,7 @@ export default function BuilderContextProvider({
             handleSelectedLayout,
             repositionBlockLayout,
             insertBlockLayoutAtIndex,
+            updateBlockLayout,
         }}>
             {children}
         </BuilderContext.Provider>

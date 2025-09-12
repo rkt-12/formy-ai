@@ -140,21 +140,21 @@ function CanvasBlockLayoutWrapper({
   
   return (
     <div className="relative mb-1">
-      <div ref={topCorner.setNodeRef} className="absolute top-0 w-full h-1/2 pointer-events-none">
-        {topCorner.isOver && !blockLayout.isLocked &&
-        allBlockLayouts.includes(activeBlock?.data?.current?.blockType) &&
-        (
-          <div className="absolute w-full -top-[3px] h-[6px] bg-primary rounded-t-md"/>
-        )}
-      </div>
+      {!blockLayout.isLocked && allBlockLayouts.includes(activeBlock?.data?.current?.blockType) && (
+        <div ref={topCorner.setNodeRef} className="absolute top-0 w-full h-1/2 pointer-events-none">
+          {topCorner.isOver && (
+            <div className="absolute w-full -top-[3px] h-[6px] bg-primary rounded-t-md"/>
+          )}
+        </div>
+      )}
       {/* Bottom Half Drop Zone */}
-      <div className="absolute bottom-0 w-full h-1/2 pointer-events-none" ref={bottomCorner.setNodeRef}>
-        {bottomCorner.isOver && !blockLayout.isLocked &&
-        allBlockLayouts.includes(activeBlock?.data?.current?.blockType) &&
-        (
-          <div className="absolute w-full -bottom-[3px] h-[6px] bg-primary rounded-b-md"/>
-        )}
-      </div>
+      {!blockLayout.isLocked && allBlockLayouts.includes(activeBlock?.data?.current?.blockType) && (
+        <div className="absolute bottom-0 w-full h-1/2 pointer-events-none" ref={bottomCorner.setNodeRef}>
+          {bottomCorner.isOver &&(
+            <div className="absolute w-full -bottom-[3px] h-[6px] bg-primary rounded-b-md"/>
+          )}
+        </div>
+      )}
       <CanvasBlockLayout blockInstance={blockLayout}/>
     </div>
   );
