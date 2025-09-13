@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Active, DragEndEvent, useDndMonitor, useDraggable, useDroppable } from "@dnd-kit/core";
 import { Copy, GripHorizontal, Rows2, Trash2Icon, X } from "lucide-react";
 import { useState } from "react";
+import ChildPropertiesComponentWrapper from "@/components/ChildPropertiesComponentWrapper";
 
 const blockCategory: FormCategoryType="Layout"
 const blockType: FormBlockType="RowLayout"
@@ -173,8 +174,21 @@ function RowLayoutFormComponent() {
   return <div>Form Component</div>
 }
 
-function RowLayoutPropertiesComponent() {
-  return <div>Properties Component</div>
+function RowLayoutPropertiesComponent({blockInstance}:{blockInstance:FormBlockInstance}) {
+  
+  const childblocks = blockInstance.childBlocks || [];
+
+  return (
+    <div className="pt-3 w-full">
+      <div className="flex flex-col w-full items-center justify-start gap-0 py-0 px-0">
+        {childblocks.map((childBlock, index)=>(
+          <div key={childBlock.id} className="w-full flex items-center justify-center gap-1 h-auto">
+            <ChildPropertiesComponentWrapper index={index+1} parentId={blockInstance.id} blockInstance={childBlock}/>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 function Border(){

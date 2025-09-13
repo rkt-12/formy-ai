@@ -1,10 +1,17 @@
-import { Button } from '@/components/ui/button'
-import { Eye, Save, Send } from 'lucide-react'
+"use client";
 import React from 'react'
+import { Button } from '@/components/ui/button'
+import { useBuilder } from '@/context/builder-provider';
+import { Eye, MousePointerClickIcon, Save, Send } from 'lucide-react'
+import { FormBlocks } from '@/lib/form-blocks';
 
 const BuilderBlockProperties = () => {
+
+    const { selectedBlockLayout }=useBuilder();
+    const LayoutPropertyBlock = selectedBlockLayout && selectedBlockLayout && FormBlocks[selectedBlockLayout.blockType]?.propertiesComponent
+
   return (
-    <div className='hidden relative w-[320px]'>
+    <div className='relative w-[320px]'>
         <div className="fixed right w-[320px] bg-white border-l shadow-sm h-screen pb-36 mt-0 scrollbar overflow-auto">
             <div className="flex flex-col w-full items-center h-auto min-h-full ">
                 <div className="w-full flex flow-row items-center bg-white pb-2 pt-3 sticky border-b border-gray-200 top-0 gap-2 px-2">
@@ -18,6 +25,21 @@ const BuilderBlockProperties = () => {
                         <Send/> Publish
                     </Button>
                 </div>
+                {!selectedBlockLayout ? (
+                    <div className="text-gray-400 gap-1 text-center text-[15px] w-full flex flex-col items-center justify-center flex-1 h-auto">
+                        <MousePointerClickIcon/>
+                        <p>Select a block to edit its properties</p>
+                    </div>
+                ) : (
+                    <div className="w-full pt-1">
+                        <div className="px-2 pt-3 pb-3 border-b border-gray-200">
+                            <h5 className="text-left font-medium text-sm">
+                                Layout Block Properties
+                            </h5>
+                            {LayoutPropertyBlock && <LayoutPropertyBlock blockInstance={selectedBlockLayout}/>}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     </div>

@@ -16,7 +16,11 @@ export type ObjectBlockType={
 
     canvasComponent:FC<{blockInstance:FormBlockInstance}>;
     formComponent:FC;
-    propertiesComponent:FC;
+    propertiesComponent:FC<{
+        positionIndex?:number;
+        parentId?:string;
+        blockInstance:FormBlockInstance;
+    }>;
 
 };
 
