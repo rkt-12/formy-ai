@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useBuilder } from '@/context/builder-provider';
 import { Eye, MousePointerClickIcon, Save, Send } from 'lucide-react'
 import { FormBlocks } from '@/lib/form-blocks';
+import PreviewDialog from './_common/PreviewDialog';
 
 const BuilderBlockProperties = () => {
 
@@ -15,9 +16,7 @@ const BuilderBlockProperties = () => {
         <div className="fixed right w-[320px] bg-white border-l shadow-sm h-screen pb-36 mt-0 scrollbar overflow-auto">
             <div className="flex flex-col w-full items-center h-auto min-h-full ">
                 <div className="w-full flex flow-row items-center bg-white pb-2 pt-3 sticky border-b border-gray-200 top-0 gap-2 px-2">
-                    <Button variant="outline" size="sm" className='!h-8 !text-primary !bg-primary/10 !border-primary'>
-                        <Eye/> Preview
-                    </Button>
+                    <PreviewDialog/>
                     <Button variant="outline" size="sm" className='!h-8 !text-primary !bg-primary/10 !border-primary'>
                         <Save/> Save
                     </Button>

@@ -1,14 +1,16 @@
 import { FormBlockInstance, FormBlockType, FormCategoryType, ObjectBlockType } from "@/@types/form-block.type"
 import { Label } from "../../ui/label"
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group"
-import { ChevronDown, CircleIcon } from "lucide-react"
+import { ChevronDown, CircleIcon, X } from "lucide-react"
 import { useBuilder } from "@/context/builder-provider"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
-import { Form, FormField, FormItem, FormLabel } from "../../ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form"
 import { Input } from "../../ui/input"
+import { Button } from "../../ui/button"
+import { Switch } from "@/components/ui/switch"
 
 const blockCategory: FormCategoryType="Field"
 const blockType: FormBlockType="RadioSelect"
@@ -154,6 +156,90 @@ function RadioSelectPropertiesComponent({
                                             }}
                                         />
                                     </div>
+                                </div>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField 
+                        control={form.control} 
+                        name="options" 
+                        render={({field})=>(
+                            <FormItem className="text-end">
+                                <div className="flex items-baseline justify-between w-full gap-2">
+                                    <FormLabel className="text-[13px] font-normal">
+                                        Options
+                                    </FormLabel>
+                                    <div className="flex flex-col gap-1">
+                                        {field?.value?.map((option:string, index:number)=>(
+                                            <div className="relative flex items-center justify-between gap-2" key={index}>
+                                                <Input
+                                                    value={option}
+                                                    onChange={(e)=>{
+                                                        const updatedOptions=[...(field.value || [])];
+                                                        updatedOptions[index]=e.target.value;
+                                                        field.onChange(updatedOptions);
+                                                        setChanges({
+                                                            ...form.getValues(),
+                                                            options: updatedOptions,
+                                                        })
+                                                    }}
+                                                    className="max-w-[187px]"
+                                                />
+                                                <Button type="button" variant="ghost" size="icon" className="!p-0 rounded-full absolute -right-1 -top-1 !bg-black w-4 h-4" 
+                                                    onClick={()=>{
+                                                        const updatedOptions=field.value?.filter((_, i)=>i!==index);
+                                                        field.onChange(updatedOptions);
+                                                        setChanges({
+                                                            ...form.getValues(),
+                                                            options: updatedOptions,
+                                                        })
+                                                    }}
+                                                    >
+                                                    <X color="white" className="!w-2.5 !h-2.5"/>
+                                                </Button>
+                                            </div>
+                                        ))}
+                                        <FormMessage />
+                                        <Button type="button" variant="outline" size="sm" className="mt-2"
+                                            onClick={()=>{
+                                                const currentOptions=field.value || [];
+                                                const newOption=`Option ${currentOptions.length + 1}`;
+                                                const updatedOptions=[...currentOptions, newOption];
+                                                field.onChange(updatedOptions);
+                                                setChanges({
+                                                    ...form.getValues(),
+                                                    options: updatedOptions,
+                                                })
+                                            }}
+                                        >
+                                            Add Option
+                                        </Button>
+                                    </div>
+                                </div>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField 
+                        control={form.control} 
+                        name="required" 
+                        render={({field})=>(
+                            <FormItem className="text-end">
+                                <div className="flex items-baseline justify-between w-full gap-2">
+                                    <FormLabel className="text-[13px] font-normal">
+                                        Required
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Switch 
+                                        checked={field.value}
+                                        onCheckedChange={(value)=>{
+                                            field.onChange(value);
+                                            setChanges({
+                                                ...form.getValues(),
+                                                required: value,
+                                            })
+                                        }}      
+                                    />
+                                    </FormControl>
                                 </div>
                             </FormItem>
                         )}
