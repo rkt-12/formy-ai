@@ -11,6 +11,7 @@ import { Active, DragEndEvent, useDndMonitor, useDraggable, useDroppable } from 
 import { Copy, GripHorizontal, Rows2, Trash2Icon, X } from "lucide-react";
 import { useState } from "react";
 import ChildPropertiesComponentWrapper from "@/components/ChildPropertiesComponentWrapper";
+import ChildFormComponentWrapper from "@/components/ChildFormComponentWrapper";
 
 const blockCategory: FormCategoryType="Layout"
 const blockType: FormBlockType="RowLayout"
@@ -170,8 +171,37 @@ function RowLayoutCanvasComponent(
   )
 }
 
-function RowLayoutFormComponent() {
-  return <div>Form Component</div>
+function RowLayoutFormComponent({
+  blockInstance,
+}:{
+  blockInstance:FormBlockInstance
+}) {
+
+  const childblocks = blockInstance.childBlocks || [];
+
+  return (
+    <div className="max-w-full">
+      {blockInstance.isLocked && <Border/> }
+      <Card 
+        className={cn(
+          `w-full bg-white relative border shadow-sm min-h-[120px] max-w-[768px] rounded-md !p-0`,
+          blockInstance.isLocked && "!rounded-t-none"
+        )} 
+      >
+        <CardContent className="px-2 pb-2">
+          <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col items-center w-full justify-center gap-4 py-4 px-3">
+              {childblocks.map((childblock)=>(
+                <div key={childblock.id} className="w-full flex items-center justify-center gap-1 h-auto">
+                  <ChildFormComponentWrapper blockInstance={childblock}/>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
 }
 
 function RowLayoutPropertiesComponent({blockInstance}:{blockInstance:FormBlockInstance}) {

@@ -1,7 +1,7 @@
 import { ElementType, FC } from "react";
 
 export type FormCategoryType="Layout"|"Field";
-export type FormBlockType="RowLayout"|"RadioSelect";
+export type FormBlockType="RowLayout"|"RadioSelect"|"TextField";
 
 export type ObjectBlockType={
     blockCategory:FormCategoryType;

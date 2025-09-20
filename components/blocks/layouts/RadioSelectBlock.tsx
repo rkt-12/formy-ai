@@ -6,11 +6,12 @@ import { useBuilder } from "@/context/builder-provider"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form"
 import { Input } from "../../ui/input"
 import { Button } from "../../ui/button"
 import { Switch } from "@/components/ui/switch"
+import { generateUniqueId } from "@/lib/helper"
 
 const blockCategory: FormCategoryType="Field"
 const blockType: FormBlockType="RadioSelect"
@@ -81,8 +82,59 @@ function RadioSelectCanvasComponent({
     )
 }
 
-function RadioSelectFormComponent() {
-    return <div>Radio Form</div>
+function RadioSelectFormComponent({
+    blockInstance,
+}:{
+    blockInstance:FormBlockInstance
+}) {
+    const block=blockInstance as newInstance;
+    const {label,options,required}=block.attributes;
+    const [isError, setIsError]=useState(false);
+    const [value, setValue]=useState("");
+
+    const validateField = (val:string) => {
+        if(required){
+            return val.trim() !== "";
+        }
+        return true;
+    }
+
+    return (
+        <div className="flex flex-col gap-3 w-full">
+            <Label className={`text-base !font-normal mb-2 ${isError ? 'text-red-500' : ''}`}>
+                {label}
+                {required && <span className="text-red-500">*</span>}
+            </Label>
+
+            <RadioGroup 
+                className="space-y-3"
+                onValueChange={(value)=>{
+                    setValue(value);
+                    const isValid=validateField(value);
+                    setIsError(!isValid);
+                }}
+            >
+                {options?.map((option:string, index:number)=>{
+                    
+                    const uniqueId=`option-${generateUniqueId()}`;
+                    
+                    return (
+                        <div key={index} className="flex items-center space-x-2">
+                            <RadioGroupItem 
+                                value={option} 
+                                id={uniqueId}
+                                className={`!cursor-pointer ${isError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                            />
+                            <Label htmlFor={uniqueId} className="!font-normal !cursor-pointer">{option}</Label>
+                        </div>
+                    )
+                })}
+            </RadioGroup>
+            {isError ? <p className="text-red-500 text-[0.8rem]">
+                {required && value.trim().length===0 ? 'This field is required' : ""}
+            </p>:null}
+        </div>
+    )
 }
 
 function RadioSelectPropertiesComponent({
