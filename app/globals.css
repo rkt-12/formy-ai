@@ -7,6 +7,10 @@ body {
   height: 100%;
 }
 
+.tips-options li{
+  list-style: disc !important;
+}
+
 /* Custom scrollbar styles */
 .scrollbar {
   overflow-y: auto;
