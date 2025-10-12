@@ -1,5 +1,6 @@
 "use client";
 
+import { FormBlockInstance } from "@/@types/form-block.type";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -7,7 +8,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import { useBuilder } from "@/context/builder-provider";
+import { toast } from "@/hooks/use-toast";
+import { AIChatSession } from "@/lib/google-ai";
+import { generateUniqueId } from "@/lib/helper";
+import { generateFormQuestionPrompt } from "@/lib/prompts";
+import { set } from "date-fns";
 import { Loader, Sparkles } from "lucide-react";
+import { title } from "process";
 import React, { useState } from "react";
 
 const AIAssistanceBtn = () => {
@@ -15,6 +23,70 @@ const AIAssistanceBtn = () => {
   const [userRequest, setUserRequest] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [show, setShow] = useState(false);
+
+  const { blockLayouts, setBlockLayouts, formData } = useBuilder();
+  const GenerateFormQuestionsWithAI = async () => {
+    if(!userRequest){
+      toast({
+        title : "Please enter your request",
+      })
+      return;
+    }
+    try{
+      setLoading(true);
+      const formName = formData?.name || "";
+      const formDescription = formData?.description || "";
+      const PROMPT = generateFormQuestionPrompt(
+        userRequest,
+        formName,
+        formDescription,
+        blockLayouts
+      )
+
+      const result = await AIChatSession.sendMessage(PROMPT);
+      const responseText = await result.response.text();
+      const parsedResponse = JSON.parse(responseText);
+      const actionType = parsedResponse.actionType;
+      const generatedBlocks = parsedResponse.blocks;
+      const addUniqueIdToGeneratedBlocks = addUniqueIds(generatedBlocks);
+
+      setBlockLayouts((prevBlocks)=>{
+        if(actionType === "addQuestions"){
+          return [...prevBlocks, ...addUniqueIdToGeneratedBlocks];
+        }
+        else if(actionType === "createForm"){
+          return [...addUniqueIdToGeneratedBlocks];
+        }
+        else{
+          console.log("Unknown action type");
+          return prevBlocks;
+        }
+      })
+
+      setIsOpen(false);
+      setUserRequest("");
+      
+    }
+    catch(error){
+      console.log("error", error);
+      toast({
+        title: "Failed to generate summary",
+        variant: "destructive",
+      })
+    }
+    finally{
+      setLoading(false);
+    }
+  }
+  function addUniqueIds(blocks: FormBlockInstance[]){
+    blocks.forEach((block)=>{
+      block.id=generateUniqueId();
+      block?.childBlocks?.forEach((child)=>{
+        child.id=generateUniqueId();
+      })
+    })
+    return blocks;
+  }
 
   return (
     <>
@@ -74,7 +146,7 @@ const AIAssistanceBtn = () => {
                 size="sm"
                 disabled={loading}
                 className="!px-3 !font-medium !py-2"
-                // onClick={}
+                onClick={GenerateFormQuestionsWithAI}
               >
                 <Sparkles />
                 Generate
