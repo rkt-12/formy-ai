@@ -44,8 +44,10 @@ const AIAssistanceBtn = () => {
       )
 
       const result = await AIChatSession.sendMessage(PROMPT);
-      const responseText = await result.response.text();
+      const responseText = result.response.text();
+      // console.log("responseText", responseText);
       const parsedResponse = JSON.parse(responseText);
+      // console.log("parsedResponse", parsedResponse);
       const actionType = parsedResponse.actionType;
       const generatedBlocks = parsedResponse.blocks;
       const addUniqueIdToGeneratedBlocks = addUniqueIds(generatedBlocks);
@@ -87,7 +89,6 @@ const AIAssistanceBtn = () => {
     })
     return blocks;
   }
-
   return (
     <>
       <Popover open={isOpen} onOpenChange={setIsOpen}>

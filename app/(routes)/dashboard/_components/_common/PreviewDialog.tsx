@@ -18,7 +18,7 @@ const PreviewDialog = () => {
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button
           variant="outline"
           size="sm"

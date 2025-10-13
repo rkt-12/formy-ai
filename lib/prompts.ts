@@ -117,7 +117,7 @@ ${stringifiedBlocks}
       "blockType": "RowLayout",
       "attributes": {},
       "isLocked": false,
-      "childblocks": [
+      "childBlocks": [
         {
           "id": "new-id-2",
           "blockType": "TextField",
@@ -145,7 +145,7 @@ ${stringifiedBlocks}
     "blockType": "RowLayout",
     "attributes": {},
     "isLocked": true,
-    "childblocks": [
+    "childBlocks": [
         {
         "id": "heading-1",
         "blockType": "Heading",
@@ -175,7 +175,7 @@ ${stringifiedBlocks}
       "blockType": "RowLayout",
       "attributes": {},
       "isLocked": false,
-      "childblocks": [
+      "childBlocks": [
         {
           "id": "new-id-4",
           "blockType": "RadioSelect",
