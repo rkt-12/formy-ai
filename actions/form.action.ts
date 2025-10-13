@@ -1,6 +1,7 @@
 "use server";
 
 import { defaultBackgroundColor, defaultPrimaryColor } from "@/constant";
+import { generateUniqueId } from "@/lib/helper";
 import { prisma } from "@/lib/prismadb";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
@@ -58,7 +59,36 @@ export async function createForm(data: { name: string; description: string }) {
       };
     }
 
-    //const jsonBlocks=[]
+    const jsonBlocks=JSON.stringify([
+      {
+        id: generateUniqueId(),
+        blockType: "RowLayout",
+        attributes: {},
+        isLocked: true,
+        childBlocks: [
+          {
+            id: generateUniqueId(),
+            blockType: "Heading",
+            attributes: {
+              label: data.name || "New Form",
+              level: 1,
+              fontSize: "4x-large",
+              fontWeight: "normal",
+            }
+          },
+          {
+            id: generateUniqueId(),
+            blockType: "Paragraph",
+            attributes: {
+              label: "Paragraph",
+              text: data.description || "Form Description",
+              fontSize: "small",
+              fontWeight: "normal"
+            },
+          },
+        ],
+      },
+    ])
 
     const formSettings = await prisma.formSettings.create({
       data: {
@@ -73,6 +103,7 @@ export async function createForm(data: { name: string; description: string }) {
         userId: user.id,
         creatorName: user?.given_name || "",
         settingsId: formSettings.id,
+        jsonBlocks,
       },
     });
     if (!form) {
@@ -120,6 +151,53 @@ export async function fetchAllForms() {
     return {
       success: true,
       message: "Form fetched successfully",
+      form,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function saveForm(data: {
+  formId: string;
+  name?: string;
+  description?: string;
+  jsonBlocks: string;
+}){
+  try {
+    const {formId, name, description, jsonBlocks}=data;
+    const session = getKindeServerSession();
+    const user = await session.getUser();
+
+    if (!user) {
+      return {
+        success: false,
+        message: "Unauthorized to use this resource",
+      };
+    }
+
+    if(!formId || !jsonBlocks){
+      return {
+        success: false,
+        message: "Invalid input data",
+      };
+    }
+
+    const form = await prisma.form.update({
+      where: {formId: formId},
+      data: {
+        ...(name && {name}),
+        ...(description && {description}),
+        jsonBlocks,
+      }
+    })
+
+    return {
+      success: true,
+      message: "Form saved successfully",
       form,
     };
   } catch (error) {
