@@ -207,3 +207,40 @@ export async function saveForm(data: {
     };
   }
 }
+
+export async function updatePublish(formId: string, published: boolean){
+  try {
+    const session = getKindeServerSession();
+    const user = await session.getUser();
+
+    if (!user) {
+      return {
+        success: false,
+        message: "Unauthorized to use this resource",
+      };
+    }
+    if(!formId){
+      return {
+        success: false,
+        message: "FormId is required",
+      };
+    }
+
+    const form = await prisma.form.update({
+      where: {formId},
+      data: {published}
+    })
+    return{
+      success: true,
+      message: `Form ${published ? 'published' : 'unpublished'} successfully`,
+      published: form.published,
+    }
+
+  } 
+  catch (error) {
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}

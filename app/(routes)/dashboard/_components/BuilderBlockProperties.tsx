@@ -1,11 +1,11 @@
 "use client";
 import React from 'react'
-import { Button } from '@/components/ui/button'
 import { useBuilder } from '@/context/builder-provider';
-import { Eye, MousePointerClickIcon, Save, Send } from 'lucide-react'
+import { MousePointerClickIcon } from 'lucide-react'
 import { FormBlocks } from '@/lib/form-blocks';
 import PreviewDialog from './_common/PreviewDialog';
 import SaveFormBtn from './_common/SaveFormBtn';
+import PublishFormBtn from './_common/PublishFormBtn';
 
 const BuilderBlockProperties = () => {
 
@@ -19,9 +19,7 @@ const BuilderBlockProperties = () => {
                 <div className="w-full flex flow-row items-center bg-white pb-2 pt-3 sticky border-b border-gray-200 top-0 gap-2 px-2">
                     <PreviewDialog/>
                     <SaveFormBtn/>
-                    <Button size="sm" className='text-white'>
-                        <Send/> Publish
-                    </Button>
+                    <PublishFormBtn/>
                 </div>
                 {!selectedBlockLayout ? (
                     <div className="text-gray-400 gap-1 text-center text-[15px] w-full flex flex-col items-center justify-center flex-1 h-auto">
