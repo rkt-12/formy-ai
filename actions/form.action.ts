@@ -1,5 +1,6 @@
 "use server";
 
+import { FormWithSettings } from "@/@types/form.type";
 import { defaultBackgroundColor, defaultPrimaryColor } from "@/constant";
 import { generateUniqueId } from "@/lib/helper";
 import { prisma } from "@/lib/prismadb";
@@ -240,6 +241,46 @@ export async function updatePublish(formId: string, published: boolean){
   catch (error) {
     return {
       success: false,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function fetchPublishFormById(formId:string):Promise<{
+  form?: FormWithSettings | null;
+  success: boolean;
+  message: string;
+}>{
+  try {
+    if(!formId){
+      return {
+        success:false,
+        message: "FormId is required",
+      };
+    }
+    const form = await prisma.form.findFirst({
+      where:{
+        formId: formId,
+        published: true
+      },
+      include:{
+        settings: true,
+      }
+    })
+    if(!form){
+      return {
+        success:false,
+        message: "Form not found",
+      };
+    }
+    return {
+      success:true,
+      message: "Form fetched successfully",
+      form,
+    };
+  } catch (error) {
+    return {
+      success:false,
       message: "Something went wrong",
     };
   }
