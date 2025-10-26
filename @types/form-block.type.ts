@@ -3,6 +3,12 @@ import { ElementType, FC } from "react";
 export type FormCategoryType="Layout"|"Field";
 export type FormBlockType="RowLayout"|"RadioSelect"|"TextField"|"TextArea"|"StarRating"|"Heading"|"Paragraph";
 
+export type FormErrorsType={
+    [key:string]:string;
+}
+
+export type HandleBlurFunc = (key:string, value:string)=>void;
+
 export type ObjectBlockType={
     blockCategory:FormCategoryType;
     blockType:FormBlockType;
@@ -15,7 +21,11 @@ export type ObjectBlockType={
     };
 
     canvasComponent:FC<{blockInstance:FormBlockInstance}>;
-    formComponent:FC<{blockInstance:FormBlockInstance}>;
+    formComponent:FC<{
+        blockInstance:FormBlockInstance;
+        handleBlur?:HandleBlurFunc;
+        formErrors?:FormErrorsType;
+    }>;
     propertiesComponent:FC<{
         positionIndex?:number;
         parentId?:string;
